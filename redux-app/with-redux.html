@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>With Redux</title>
+  </head>
+  <body>
+    <head>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.2.0/redux.min.js"></script>
+    </head>
+    <style>
+      .container {
+        border: 5px solid black;
+        padding: 10px;
+      }
+    </style>
+    <div id="red"></div>
+    <div id="green"></div>
+    <div id="blue"></div>
+    <script>
+      function reducer(state, action) {
+        console.log(state, action);
+        if (state === undefined) {
+          return { color: 'yellow' };
+        }
+        let newState;
+        if (action.type === 'CHANGE_COLOR') {
+          // State 을 직접적으로 바꾸는 것 보다 복제된 값을 주입 시키는 것이 좋다.
+
+          newState = Object.assign({}, state, { color: action.color });
+        }
+        return newState;
+      }
+
+      const store = Redux.createStore(reducer, window.__REDUX.DEVTOOLS_EXTENSION__ && window.__REDUX.DEVTOOLS_EXTENSION__());
+
+      const state = store.getState();
+
+      function red() {
+        document.querySelector('#red').innerHTML = `
+        <div class='container' id="component_red" style="background-color:${state.color}">
+          <h1>Red</h1>
+          <input type="button" value="fire" onClick="
+          store.dispatch({type:'CHANGE_COLOR', color:'red'});
+          ">
+        </div>
+  `;
+      }
+
+      store.subscribe(red);
+
+      red();
+    </script>
+  </body>
+</html>
